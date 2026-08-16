@@ -122,11 +122,10 @@
     padding-top:env(safe-area-inset-top);
   }
   .topbar-inner{
-    display:flex; align-items:center; justify-content:space-between;
+    display:grid; grid-template-columns:2.1rem 1fr auto; align-items:center;
     padding:.85rem 1rem;
-    gap:.75rem;
+    gap:.6rem;
   }
-  .brand{ display:flex; align-items:center; gap:.55rem; min-width:0; }
   .brand-mark{
     width:2.1rem; height:2.1rem; border-radius:.6rem;
     background:var(--accent); color:var(--accent-ink);
@@ -134,6 +133,7 @@
   }
   .brand-name{
     font-weight:800; font-size:1.05rem; letter-spacing:-.01em;
+    text-align:center;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .lang-toggle{
@@ -274,12 +274,10 @@
 
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9v-5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V20h2.5a1 1 0 0 0 1-1v-9"/></svg>
-        </span>
-        <span class="brand-name"><span class="en">NYC 5B Anchor</span><span class="es">NYC 5B Anchor</span></span>
-      </div>
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9v-5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V20h2.5a1 1 0 0 0 1-1v-9"/></svg>
+      </span>
+      <span class="brand-name"><span class="en">NYC 5B Anchor</span><span class="es">NYC 5B Anchor</span></span>
       <button id="langToggle" class="lang-toggle" aria-label="Switch language / Cambiar idioma">
         <span class="lang-opt en-opt is-active">EN</span><span class="lang-sep">/</span><span class="lang-opt es-opt">ES</span>
       </button>
@@ -314,7 +312,7 @@
         </a>
 
         <a class="quickcall is-urgent" href="tel:18883582384">
-          <span class="num" style="font-size:.8rem;">1888</span>
+          <span class="num" style="font-size:.68rem;">1(888)</span>
           <span>
             <span class="label"><span class="en">Denied shelter? Shelter problem?</span><span class="es">¿Le negaron refugio? ¿Problema en el refugio?</span></span>
             <div class="sub"><span class="en">Coalition for the Homeless Crisis Line — 1-888-358-2384</span><span class="es">Línea de Crisis Coalition for the Homeless — 1-888-358-2384</span></div>
