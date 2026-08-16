@@ -1,0 +1,1095 @@
+<title>NYC Help Now</title>
+<style>
+  :root{
+    --bg:#EEF3F0;
+    --bg-shell:#F6F9F7;
+    --card:#FFFFFF;
+    --card-border:#D7E3DC;
+    --text:#17251F;
+    --text-muted:#4E6259;
+    --accent:#0E6E62;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#DFEEE8;
+    --urgent:#B5551A;
+    --urgent-ink:#FFFFFF;
+    --urgent-tint:#FBE7D6;
+    --danger:#A02E22;
+    --danger-ink:#FFFFFF;
+    --danger-tint:#F7DDD8;
+    --chip-bg:#E4EFE9;
+    --chip-text:#0E6E62;
+    --chip-active-bg:#0E6E62;
+    --chip-active-text:#FFFFFF;
+    --shadow:0 1px 2px rgba(15,35,28,.06), 0 8px 24px rgba(15,35,28,.07);
+    --focus:#0E6E62;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1815;
+      --bg-shell:#0E1D19;
+      --card:#132621;
+      --card-border:#25423B;
+      --text:#EAF1EC;
+      --text-muted:#9FB8AE;
+      --accent:#57C6B7;
+      --accent-ink:#052420;
+      --accent-tint:#123B33;
+      --urgent:#F0A257;
+      --urgent-ink:#2A1608;
+      --urgent-tint:#3A2413;
+      --danger:#F1897A;
+      --danger-ink:#2C0D08;
+      --danger-tint:#3B1712;
+      --chip-bg:#183A32;
+      --chip-text:#7FE0CE;
+      --chip-active-bg:#57C6B7;
+      --chip-active-text:#052420;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+      --focus:#7FE0CE;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1815;
+    --bg-shell:#0E1D19;
+    --card:#132621;
+    --card-border:#25423B;
+    --text:#EAF1EC;
+    --text-muted:#9FB8AE;
+    --accent:#57C6B7;
+    --accent-ink:#052420;
+    --accent-tint:#123B33;
+    --urgent:#F0A257;
+    --urgent-ink:#2A1608;
+    --urgent-tint:#3A2413;
+    --danger:#F1897A;
+    --danger-ink:#2C0D08;
+    --danger-tint:#3B1712;
+    --chip-bg:#183A32;
+    --chip-text:#7FE0CE;
+    --chip-active-bg:#57C6B7;
+    --chip-active-text:#052420;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    --focus:#7FE0CE;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  .skip-link{
+    position:absolute; left:-999px; top:0; background:var(--accent); color:var(--accent-ink);
+    padding:.6em 1em; border-radius:0 0 .5em 0; z-index:100;
+  }
+  .skip-link:focus{ left:0; }
+
+  [data-lang="en"] .es{ display:none; }
+  [data-lang="es"] .en{ display:none; }
+
+  .app{
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--bg-shell);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  @media (min-width:560px){
+    body{ background:
+      radial-gradient(1200px 800px at 50% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
+      var(--bg);
+      padding:2rem 0;
+    }
+    .app{
+      min-height:calc(100vh - 4rem);
+      border:1px solid var(--card-border);
+      border-radius:1.5rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+  }
+
+  /* Top bar */
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    background:var(--bg-shell);
+    border-bottom:1px solid var(--card-border);
+    padding-top:env(safe-area-inset-top);
+  }
+  .topbar-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.85rem 1rem;
+    gap:.75rem;
+  }
+  .brand{ display:flex; align-items:center; gap:.55rem; min-width:0; }
+  .brand-mark{
+    width:2.1rem; height:2.1rem; border-radius:.6rem;
+    background:var(--accent); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .brand-name{
+    font-weight:800; font-size:1.05rem; letter-spacing:-.01em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .lang-toggle{
+    flex:none;
+    display:flex; align-items:center; gap:.35rem;
+    background:var(--chip-bg); color:var(--chip-text);
+    border:1px solid var(--card-border);
+    border-radius:999px; padding:.4rem .55rem;
+    font-weight:800; font-size:.85rem; cursor:pointer;
+  }
+  .lang-toggle .lang-opt{ padding:.1rem .4rem; border-radius:999px; }
+  .lang-toggle .lang-opt.is-active{ background:var(--chip-active-bg); color:var(--chip-active-text); }
+  .lang-toggle .lang-sep{ opacity:.5; }
+
+  /* Screens */
+  .screens{ flex:1; padding:1rem 1rem 5.5rem; }
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fadein .15s ease-out; }
+  @media (prefers-reduced-motion: reduce){ .screen.active{ animation:none; } }
+  @keyframes fadein{ from{ opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+  h1{ font-size:1.5rem; margin:.2rem 0 .35rem; letter-spacing:-.01em; text-wrap:balance; }
+  h2{ font-size:1.1rem; margin:1.4rem 0 .6rem; letter-spacing:-.01em; text-wrap:balance; }
+  h2:first-child{ margin-top:.2rem; }
+  .lede{ color:var(--text-muted); margin:0 0 1rem; font-size:.95rem; }
+  .eyebrow{
+    display:block; font-size:.72rem; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:.3rem;
+  }
+
+  /* Cards */
+  .card{
+    background:var(--card); border:1px solid var(--card-border);
+    border-radius:1rem; padding:1rem; margin-bottom:.85rem;
+  }
+  .card h3{ margin:0 0 .3rem; font-size:1.02rem; letter-spacing:-.005em; }
+  .card p{ margin:.3rem 0; font-size:.92rem; color:var(--text-muted); }
+  .card address{ font-style:normal; font-size:.92rem; color:var(--text); margin:.3rem 0; }
+
+  .chips{ display:flex; gap:.4rem; flex-wrap:wrap; margin:.4rem 0; }
+  .chip{
+    background:var(--chip-bg); color:var(--chip-text);
+    font-size:.72rem; font-weight:800; letter-spacing:.02em;
+    padding:.25rem .55rem; border-radius:999px;
+  }
+
+  .filterrow{
+    display:flex; gap:.5rem; overflow-x:auto; padding:.15rem .1rem .7rem;
+    margin:0 -.1rem 1rem; -webkit-overflow-scrolling:touch;
+  }
+  .filterrow::-webkit-scrollbar{ display:none; }
+  .filterbtn{
+    flex:none; border:1px solid var(--card-border); background:var(--card);
+    color:var(--text); padding:.45rem .85rem; border-radius:999px;
+    font-size:.82rem; font-weight:700; cursor:pointer; white-space:nowrap;
+  }
+  .filterbtn.is-active{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+
+  .actions{ display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.7rem; }
+  .btn{
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.62rem .95rem; border-radius:.7rem;
+    font-weight:800; font-size:.88rem; text-decoration:none;
+    border:1px solid transparent; cursor:pointer;
+  }
+  .btn svg{ width:1.05em; height:1.05em; flex:none; }
+  .btn-call{ background:var(--accent); color:var(--accent-ink); }
+  .btn-call.is-urgent{ background:var(--urgent); color:var(--urgent-ink); }
+  .btn-call.is-danger{ background:var(--danger); color:var(--danger-ink); }
+  .btn-link{ background:transparent; color:var(--accent); border-color:var(--card-border); }
+
+  .quickgrid{ display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.2rem; }
+  .quickcall{
+    display:flex; align-items:center; gap:.8rem;
+    background:var(--card); border:1px solid var(--card-border);
+    border-radius:1rem; padding:.85rem 1rem; text-decoration:none; color:var(--text);
+  }
+  .quickcall .num{
+    flex:none; width:3rem; height:3rem; border-radius:.8rem;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:1rem; background:var(--accent-tint); color:var(--accent);
+  }
+  .quickcall.is-urgent .num{ background:var(--urgent-tint); color:var(--urgent); }
+  .quickcall.is-danger .num{ background:var(--danger-tint); color:var(--danger); }
+  .quickcall .label{ font-weight:800; font-size:.94rem; }
+  .quickcall .sub{ font-size:.82rem; color:var(--text-muted); margin-top:.1rem; }
+
+  .notice, .warn{
+    border-radius:1rem; padding:.9rem 1rem; margin:1rem 0;
+    border-left:4px solid var(--accent);
+    background:var(--accent-tint); font-size:.9rem;
+  }
+  .warn{ border-left-color:var(--urgent); background:var(--urgent-tint); }
+  .notice strong, .warn strong{ display:block; margin-bottom:.25rem; font-size:.92rem; }
+
+  .steps{ margin:0; padding-left:0; list-style:none; counter-reset:step; }
+  .steps li{
+    counter-increment:step; position:relative; padding-left:2.1rem; margin-bottom:.7rem; font-size:.92rem;
+  }
+  .steps li::before{
+    content:counter(step); position:absolute; left:0; top:0;
+    width:1.5rem; height:1.5rem; border-radius:50%;
+    background:var(--accent); color:var(--accent-ink);
+    font-weight:800; font-size:.78rem; display:flex; align-items:center; justify-content:center;
+  }
+
+  footer.disclaimer{ margin-top:1.5rem; font-size:.78rem; color:var(--text-muted); }
+
+  .qrcard{ text-align:center; }
+  .qrpanel{
+    background:#FFFFFF; border-radius:.85rem; padding:1rem;
+    display:inline-flex; justify-content:center; box-shadow:var(--shadow);
+    margin:.3rem auto .8rem;
+  }
+  .qrpanel svg{ width:11rem; height:11rem; display:block; }
+  .qrurl{
+    font-size:.72rem; color:var(--text-muted); word-break:break-all;
+    font-variant-numeric:tabular-nums; margin-top:.2rem;
+  }
+
+  /* Bottom nav */
+  .bottomnav{
+    position:sticky; bottom:0; z-index:20;
+    display:flex; background:var(--bg-shell);
+    border-top:1px solid var(--card-border);
+    padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom));
+  }
+  .navbtn{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:.2rem;
+    background:none; border:none; color:var(--text-muted);
+    padding:.4rem .1rem; border-radius:.7rem; cursor:pointer; font-family:inherit;
+  }
+  .navbtn svg{ width:1.35rem; height:1.35rem; }
+  .navbtn .navlabel{ font-size:.68rem; font-weight:700; }
+  .navbtn.is-active{ color:var(--accent); }
+
+  :focus-visible{ outline:2px solid var(--focus); outline-offset:2px; }
+</style>
+
+<div class="app" data-lang="en" id="app">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9v-5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V20h2.5a1 1 0 0 0 1-1v-9"/></svg>
+        </span>
+        <span class="brand-name"><span class="en">NYC Help Now</span><span class="es">Ayuda NYC Ahora</span></span>
+      </div>
+      <button id="langToggle" class="lang-toggle" aria-label="Switch language / Cambiar idioma">
+        <span class="lang-opt en-opt is-active">EN</span><span class="lang-sep">/</span><span class="lang-opt es-opt">ES</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" class="screens">
+
+    <!-- HOME -->
+    <section id="screen-home" class="screen active" data-screen="home">
+      <h1><span class="en">Need help right now?</span><span class="es">¿Necesita ayuda ahora mismo?</span></h1>
+      <p class="lede">
+        <span class="en">Tap a button below to call. All of these are free. Works in all 5 boroughs.</span>
+        <span class="es">Toque un botón para llamar. Todos son gratis. Funciona en los 5 condados de NYC.</span>
+      </p>
+
+      <div class="quickgrid">
+        <a class="quickcall is-danger" href="tel:911">
+          <span class="num">911</span>
+          <span>
+            <span class="label"><span class="en">Life-threatening emergency</span><span class="es">Emergencia que pone en peligro la vida</span></span>
+            <div class="sub"><span class="en">Medical, fire, violence — any time</span><span class="es">Médica, incendio, violencia — cualquier hora</span></div>
+          </span>
+        </a>
+
+        <a class="quickcall" href="tel:311">
+          <span class="num">311</span>
+          <span>
+            <span class="label"><span class="en">NYC city help line (24/7)</span><span class="es">Línea de ayuda de la Ciudad (24/7)</span></span>
+            <div class="sub"><span class="en">Shelter questions, no heat/water, warming centers, anything city</span><span class="es">Preguntas de refugio, sin calefacción/agua, centros de calor, todo lo de la ciudad</span></div>
+          </span>
+        </a>
+
+        <a class="quickcall is-urgent" href="tel:18883582384">
+          <span class="num" style="font-size:.8rem;">1888</span>
+          <span>
+            <span class="label"><span class="en">Denied shelter? Shelter problem?</span><span class="es">¿Le negaron refugio? ¿Problema en el refugio?</span></span>
+            <div class="sub"><span class="en">Coalition for the Homeless Crisis Line — 1-888-358-2384</span><span class="es">Línea de Crisis Coalition for the Homeless — 1-888-358-2384</span></div>
+          </span>
+        </a>
+
+        <a class="quickcall is-urgent" href="tel:18006214673">
+          <span class="num" style="font-size:.72rem;">HOPE</span>
+          <span>
+            <span class="label"><span class="en">Domestic violence — confidential</span><span class="es">Violencia doméstica — confidencial</span></span>
+            <div class="sub"><span class="en">NYC Hope Hotline, 24/7 — 1-800-621-4673</span><span class="es">Línea Hope de NYC, 24/7 — 1-800-621-4673</span></div>
+          </span>
+        </a>
+
+        <a class="quickcall" href="tel:17185571399">
+          <span class="num" style="font-size:.72rem;">HRA</span>
+          <span>
+            <span class="label"><span class="en">Cash for rent / benefits status</span><span class="es">Dinero para renta / estado de beneficios</span></span>
+            <div class="sub"><span class="en">HRA InfoLine — 718-557-1399</span><span class="es">Línea de HRA — 718-557-1399</span></div>
+          </span>
+        </a>
+      </div>
+
+      <h2><span class="en">How NYC shelter really works</span><span class="es">Cómo funciona realmente el refugio en NYC</span></h2>
+      <ol class="steps">
+        <li>
+          <span class="en">You don't pick a shelter yourself. You go to an <strong>intake center</strong> for your situation, get screened, and are assigned a bed. It can take a few hours — sometimes more than one visit.</span>
+          <span class="es">Usted no elige el refugio. Va a un <strong>centro de admisión (intake)</strong> según su situación, lo evalúan, y le asignan una cama. Puede tardar varias horas — a veces más de una visita.</span>
+        </li>
+        <li>
+          <span class="en">Bring ID and paperwork for everyone in your family if you have it. If you have children and nowhere safe tonight, <strong>they cannot turn your family away</strong> for missing paperwork.</span>
+          <span class="es">Lleve identificación y documentos de toda su familia si los tiene. Si tiene hijos y no tiene dónde dormir esta noche, <strong>no pueden rechazar a su familia</strong> por falta de documentos.</span>
+        </li>
+        <li>
+          <span class="en">Fleeing domestic violence? <strong>Do not</strong> go to a regular intake center — call the Hope Hotline above first. They place you in a confidential, separate shelter.</span>
+          <span class="es">¿Huye de violencia doméstica? <strong>No</strong> vaya a un centro de admisión regular — primero llame a la Línea Hope de arriba. La colocan en un refugio confidencial y separado.</span>
+        </li>
+      </ol>
+      <p class="lede">
+        <span class="en">See the Shelter tab below for exact intake addresses by category (men, women, families, pets, LGBTQ+ youth).</span>
+        <span class="es">Vea la pestaña Refugio abajo para direcciones exactas de admisión por categoría (hombres, mujeres, familias, mascotas, jóvenes LGBTQ+).</span>
+      </p>
+    </section>
+
+    <!-- SHELTER -->
+    <section id="screen-shelter" class="screen" data-screen="shelter">
+      <h1><span class="en">Shelter intake</span><span class="es">Admisión a refugio</span></h1>
+      <p class="lede">
+        <span class="en">These are the citywide intake centers. Confirm hours by calling 311 first if you can — sites occasionally move.</span>
+        <span class="es">Estos son los centros de admisión de toda la ciudad. Confirme el horario llamando al 311 si puede — los lugares a veces cambian.</span>
+      </p>
+
+      <div class="warn">
+        <strong><span class="en">Just displaced by a fire or disaster?</span><span class="es">¿Acaba de quedarse sin hogar por un incendio o desastre?</span></strong>
+        <span class="en">The American Red Cross can respond directly to a fire, help right on scene with a place to stay tonight, food, clothing, and basic financial help — free, 24/7, any borough.</span>
+        <span class="es">La Cruz Roja Americana puede responder directamente a un incendio, y ayudar en el lugar con un lugar para dormir esta noche, comida, ropa, y ayuda financiera básica — gratis, 24/7, cualquier condado.</span>
+        <div class="actions">
+          <a class="btn btn-call is-urgent" href="tel:18007332767"><span class="en">Call 1-800-RED-CROSS</span><span class="es">Llamar al 1-800-RED-CROSS</span></a>
+          <a class="btn btn-link" href="https://www.redcross.org/local/new-york/greater-new-york/get-help.html" target="_blank" rel="noopener">redcross.org</a>
+        </div>
+      </div>
+
+      <h2><span class="en">Other emergency & multi-service charities</span><span class="es">Otras organizaciones benéficas de emergencia y servicios múltiples</span></h2>
+      <p class="lede">
+        <span class="en">These help with emergency food, cash, and shelter referrals — all serve anyone in need, regardless of faith or background.</span>
+        <span class="es">Estas ayudan con comida de emergencia, dinero en efectivo, y referencias de refugio — todas atienden a cualquier persona necesitada, sin importar su religión u origen.</span>
+      </p>
+
+      <div class="card">
+        <h3><span class="en">Catholic Charities — Manhattan, Bronx & Staten Island</span><span class="es">Catholic Charities — Manhattan, Bronx y Staten Island</span></h3>
+        <div class="chips"><span class="chip"><span class="en">All faiths welcome</span><span class="es">Todas las religiones bienvenidas</span></span></div>
+        <p><span class="en">Emergency food, rent/utility help, and referrals for the Archdiocese of New York's service area.</span><span class="es">Comida de emergencia, ayuda con renta/servicios públicos, y referencias para el área de servicio de la Arquidiócesis de Nueva York.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:18887447900"><span class="en">Help Line: 888-744-7900</span><span class="es">Línea de Ayuda: 888-744-7900</span></a>
+          <a class="btn btn-link" href="https://catholiccharitiesny.org/find-help/" target="_blank" rel="noopener">catholiccharitiesny.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Catholic Charities — Brooklyn & Queens</span><span class="es">Catholic Charities — Brooklyn y Queens</span></h3>
+        <div class="chips"><span class="chip"><span class="en">All faiths welcome</span><span class="es">Todas las religiones bienvenidas</span></span></div>
+        <p><span class="en">Emergency assistance call center for food, cash aid, and case referrals in Brooklyn and Queens. Mon–Fri 9am–6pm.</span><span class="es">Centro de llamadas de asistencia de emergencia para comida, ayuda económica, y referencias de casos en Brooklyn y Queens. Lun–Vie 9am–6pm.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:17187226001"><span class="en">Call 718-722-6001</span><span class="es">Llamar al 718-722-6001</span></a>
+          <a class="btn btn-link" href="https://www.ccbq.org/contact/" target="_blank" rel="noopener">ccbq.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">The Salvation Army — Greater New York</span><span class="es">El Ejército de Salvación — Gran Nueva York</span></h3>
+        <div class="chips"><span class="chip"><span class="en">All 5 boroughs</span><span class="es">5 condados</span></span></div>
+        <p><span class="en">Runs shelters, food pantries, soup kitchens, and a mobile street outreach team for people sleeping outside, plus emergency and disaster assistance.</span><span class="es">Opera refugios, despensas, comedores, y un equipo móvil de alcance callejero para personas que duermen en la calle, además de asistencia de emergencia y desastres.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://easternusa.salvationarmy.org/greater-new-york/social-services" target="_blank" rel="noopener"><span class="en">Find services near you</span><span class="es">Buscar servicios cerca de usted</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>UJA-Federation of New York — Connect to Care</h3>
+        <div class="chips"><span class="chip"><span class="en">All backgrounds welcome</span><span class="es">Todos los orígenes bienvenidos</span></span></div>
+        <p><span class="en">Regional centers offering emergency cash assistance and job-training referrals for anyone in crisis, not only the Jewish community.</span><span class="es">Centros regionales que ofrecen asistencia económica de emergencia y referencias de capacitación laboral para cualquier persona en crisis, no solo la comunidad judía.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.ujafedny.org/connect-to-care" target="_blank" rel="noopener">ujafedny.org/connect-to-care</a>
+        </div>
+      </div>
+
+      <h2><span class="en">City shelter intake, by category</span><span class="es">Admisión a refugios de la ciudad, por categoría</span></h2>
+      <div class="filterrow" id="shelterFilters">
+        <button class="filterbtn is-active" data-filter="all"><span class="en">All</span><span class="es">Todos</span></button>
+        <button class="filterbtn" data-filter="men"><span class="en">Men</span><span class="es">Hombres</span></button>
+        <button class="filterbtn" data-filter="women"><span class="en">Women</span><span class="es">Mujeres</span></button>
+        <button class="filterbtn" data-filter="families"><span class="en">Families</span><span class="es">Familias</span></button>
+        <button class="filterbtn" data-filter="dv"><span class="en">DV + Pets</span><span class="es">VD + Mascotas</span></button>
+        <button class="filterbtn" data-filter="lgbtq"><span class="en">LGBTQ+ Youth</span><span class="es">Jóvenes LGBTQ+</span></button>
+      </div>
+
+      <div class="card" data-tags="men">
+        <span class="eyebrow"><span class="en">Single adults · Men</span><span class="es">Adultos solteros · Hombres</span></span>
+        <h3><span class="en">Single Men's Intake</span><span class="es">Admisión para Hombres Solteros</span></h3>
+        <div class="chips"><span class="chip">Manhattan</span></div>
+        <address>8 East 3rd Street, Manhattan</address>
+        <p><span class="en">Walk in any time. Screening happens on site; you may be asked to come back.</span><span class="es">Vaya en cualquier momento. La evaluación es en el lugar; puede que le pidan volver.</span></p>
+        <p><span class="en">🍎 Free food nearby: open the Food tab and search this address in Plentiful or the City Harvest map.</span><span class="es">🍎 Comida gratis cerca: abra la pestaña Comida y busque esta dirección en Plentiful o el mapa de City Harvest.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311 to confirm</span><span class="es">Llame al 311 para confirmar</span></a>
+        </div>
+      </div>
+
+      <div class="card" data-tags="women">
+        <span class="eyebrow"><span class="en">Single adults · Women</span><span class="es">Adultas solteras · Mujeres</span></span>
+        <h3><span class="en">Single Women's Intake</span><span class="es">Admisión para Mujeres Solteras</span></h3>
+        <div class="chips"><span class="chip">Bronx</span><span class="chip">Brooklyn</span></div>
+        <address>Franklin Shelter — 1122 Franklin Ave (near 166th St), Bronx<br>HELP Women's Center — 116 Williams Ave, Brooklyn</address>
+        <p><span class="en">Either location can start your intake.</span><span class="es">Cualquiera de los dos lugares puede iniciar su admisión.</span></p>
+        <p><span class="en">🍎 Free food nearby: check Plentiful or the City Harvest map for this address.</span><span class="es">🍎 Comida gratis cerca: revise Plentiful o el mapa de City Harvest para esta dirección.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311 to confirm</span><span class="es">Llame al 311 para confirmar</span></a>
+        </div>
+      </div>
+
+      <div class="card" data-tags="families">
+        <span class="eyebrow"><span class="en">Adult families (no minor children)</span><span class="es">Familias de adultos (sin hijos menores)</span></span>
+        <h3><span class="en">Adult Family Intake Center (AFIC)</span><span class="es">Centro de Admisión de Familias Adultas (AFIC)</span></h3>
+        <div class="chips"><span class="chip">Manhattan</span></div>
+        <address>400–430 East 30th Street (at 1st Ave), Manhattan</address>
+        <p><span class="en">For two or more related adults with no children under 21 — e.g. adult siblings, or an adult and an elderly parent.</span><span class="es">Para dos o más adultos emparentados sin hijos menores de 21 años — por ejemplo, hermanos adultos, o un adulto con un padre/madre mayor.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311 to confirm</span><span class="es">Llame al 311 para confirmar</span></a>
+        </div>
+      </div>
+
+      <div class="card" data-tags="families">
+        <span class="eyebrow"><span class="en">Families with children & pregnant people</span><span class="es">Familias con hijos y personas embarazadas</span></span>
+        <h3><span class="en">PATH Intake Center</span><span class="es">Centro de Admisión PATH</span></h3>
+        <div class="chips"><span class="chip">Bronx</span><span class="chip"><span class="en">Open 24/7</span><span class="es">Abierto 24/7</span></span></div>
+        <address>151 East 151st Street, Bronx</address>
+        <p><span class="en"><strong>Fathers and male partners are housed together</strong> as part of the same family case — being a dad does not exclude you from family shelter. This is different from domestic-violence shelters below, which are usually survivors + children only for safety.</span><span class="es"><strong>Los padres y parejas masculinas se alojan juntos</strong> como parte del mismo caso familiar — ser padre no lo excluye del refugio familiar. Esto es diferente de los refugios de violencia doméstica de abajo, que por seguridad suelen ser solo para sobrevivientes e hijos.</span></p>
+        <p><span class="en">🍎 Free food nearby: check Plentiful or the City Harvest map for this address.</span><span class="es">🍎 Comida gratis cerca: revise Plentiful o el mapa de City Harvest para esta dirección.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311 to confirm</span><span class="es">Llame al 311 para confirmar</span></a>
+        </div>
+      </div>
+
+      <div class="card" data-tags="dv">
+        <span class="eyebrow"><span class="en">Domestic violence · Pet-friendly</span><span class="es">Violencia doméstica · Acepta mascotas</span></span>
+        <h3><span class="en">PALS Program (Urban Resource Institute)</span><span class="es">Programa PALS (Urban Resource Institute)</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Confidential locations</span><span class="es">Ubicaciones confidenciales</span></span></div>
+        <p><span class="en">11 sites citywide let domestic-violence survivors stay together with their pets — dogs, cats, and more. Call the Hope Hotline first and tell them you have a pet and ask for PALS.</span><span class="es">11 lugares en toda la ciudad permiten que sobrevivientes de violencia doméstica se queden junto a sus mascotas — perros, gatos y más. Llame primero a la Línea Hope, diga que tiene una mascota y pida el programa PALS.</span></p>
+        <div class="actions">
+          <a class="btn btn-call is-urgent" href="tel:18006214673"><span class="en">Call Hope Hotline</span><span class="es">Llamar a la Línea Hope</span></a>
+          <a class="btn btn-link" href="https://urinyc.org/uripals/" target="_blank" rel="noopener"><span class="en">About PALS</span><span class="es">Sobre PALS</span></a>
+        </div>
+      </div>
+
+      <div class="card" data-tags="lgbtq">
+        <span class="eyebrow"><span class="en">LGBTQ+ youth · Ages 16–24</span><span class="es">Jóvenes LGBTQ+ · Edades 16–24</span></span>
+        <h3><span class="en">Ali Forney Center Drop-In</span><span class="es">Centro de Recepción Ali Forney</span></h3>
+        <div class="chips"><span class="chip">Manhattan</span></div>
+        <address>321 West 125th Street, Manhattan</address>
+        <p><span class="en">Walk-in entry point for LGBTQ+ homeless and at-risk youth — leads to shelter, case management, and services.</span><span class="es">Punto de entrada sin cita para jóvenes LGBTQ+ sin hogar o en riesgo — conecta con refugio, gestión de casos y servicios.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.aliforneycenter.org/get-help" target="_blank" rel="noopener"><span class="en">Get help</span><span class="es">Obtener ayuda</span></a>
+        </div>
+      </div>
+
+      <p class="lede" style="margin-top:.5rem;">
+        <span class="en">Locations change. Always confirm by calling 311 before traveling.</span>
+        <span class="es">Los lugares cambian. Siempre confirme llamando al 311 antes de viajar.</span>
+      </p>
+    </section>
+
+    <!-- FOOD -->
+    <section id="screen-food" class="screen" data-screen="food">
+      <h1><span class="en">Free food, 24/7</span><span class="es">Comida gratis, 24/7</span></h1>
+      <p class="lede">
+        <span class="en">These tools show what's open right now, near you — hours change daily so check before you travel.</span>
+        <span class="es">Estas herramientas muestran qué está abierto ahora, cerca de usted — el horario cambia a diario, revise antes de viajar.</span>
+      </p>
+
+      <div class="card">
+        <h3><span class="en">Plentiful app</span><span class="es">Aplicación Plentiful</span></h3>
+        <p><span class="en">Free app to find and reserve a spot at pantries near you, in real time.</span><span class="es">App gratis para encontrar y reservar un turno en despensas cerca de usted, en tiempo real.</span></p>
+        <p><strong><span class="en">No smartphone yet?</span><span class="es">¿Aún no tiene teléfono inteligente?</span></strong> <span class="en">Text the word</span><span class="es">Envíe la palabra</span> <strong>FOOD</strong> <span class="en">to</span><span class="es">al</span> <strong>726-879</strong> <span class="en">for a download link.</span><span class="es">para recibir un enlace de descarga.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="sms:726879?body=FOOD"><span class="en">Text FOOD to 726-879</span><span class="es">Enviar FOOD al 726-879</span></a>
+          <a class="btn btn-link" href="https://www.plentifulapp.com" target="_blank" rel="noopener">plentifulapp.com</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">City Harvest free food map</span><span class="es">Mapa de comida gratis de City Harvest</span></h3>
+        <p><span class="en">Live map of pantries, soup kitchens, community fridges, and mobile markets across all 5 boroughs.</span><span class="es">Mapa en vivo de despensas, comedores, refrigeradores comunitarios y mercados móviles en los 5 condados.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.cityharvest.org/food-map" target="_blank" rel="noopener"><span class="en">Open map</span><span class="es">Abrir mapa</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Food Bank For NYC — Find Food</span><span class="es">Food Bank For NYC — Buscar Comida</span></h3>
+        <p><span class="en">Another free directory of pantries and soup kitchens citywide.</span><span class="es">Otro directorio gratuito de despensas y comedores en toda la ciudad.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://foodbanknyc.org/find-food" target="_blank" rel="noopener"><span class="en">Find food near you</span><span class="es">Buscar comida cerca de usted</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">ACCESS NYC — Food Help</span><span class="es">ACCESS NYC — Ayuda con Comida</span></h3>
+        <p><span class="en">The city's own page listing free and low-cost food programs you can apply for, including emergency food assistance.</span><span class="es">La página oficial de la ciudad con programas de comida gratis y de bajo costo a los que puede aplicar, incluyendo asistencia alimentaria de emergencia.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://access.nyc.gov/programs/emergency-food-assistance" target="_blank" rel="noopener"><span class="en">See food programs</span><span class="es">Ver programas de comida</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">NIDC food resource list</span><span class="es">Lista de recursos de comida de NIDC</span></h3>
+        <p><span class="en">A community group's curated list of pantries and food tools, with an extra focus on the Bronx.</span><span class="es">Una lista de despensas y herramientas de comida hecha por un grupo comunitario, con un enfoque adicional en el Bronx.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.nidcny.org/food" target="_blank" rel="noopener">nidcny.org/food</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Monthly food benefits (SNAP)</span><span class="es">Beneficios mensuales de comida (SNAP)</span></h3>
+        <p><span class="en">Ongoing free monthly grocery money through HRA — no immigration status check for the applicant's eligible household members.</span><span class="es">Dinero mensual gratis para comestibles a través de HRA — se aplica sin importar el estatus migratorio de los miembros elegibles del hogar.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:17185571399"><span class="en">Call HRA InfoLine</span><span class="es">Llamar a la Línea de HRA</span></a>
+        </div>
+      </div>
+
+      <div class="notice">
+        <strong><span class="en">Tip</span><span class="es">Consejo</span></strong>
+        <span class="en">Pantry hours change day to day. Always check Plentiful or call ahead so you don't make a wasted trip.</span>
+        <span class="es">El horario de las despensas cambia cada día. Siempre revise Plentiful o llame antes para no hacer un viaje en vano.</span>
+      </div>
+    </section>
+
+    <!-- HEALTH -->
+    <section id="screen-health" class="screen" data-screen="health">
+      <h1><span class="en">Health & wellness</span><span class="es">Salud y bienestar</span></h1>
+      <p class="lede">
+        <span class="en">Your mental health matters as much as a roof over your head. Support is free, confidential, and available right now — in all 5 boroughs.</span>
+        <span class="es">Su salud mental importa tanto como tener un techo. El apoyo es gratis, confidencial, y está disponible ahora mismo — en los 5 condados.</span>
+      </p>
+
+      <div class="quickgrid">
+        <a class="quickcall is-urgent" href="tel:18886929355">
+          <span class="num" style="font-size:.68rem;"><span class="en">WELL</span><span class="es">WELL</span></span>
+          <span>
+            <span class="label"><span class="en">Feeling overwhelmed, anxious, or in crisis?</span><span class="es">¿Se siente abrumado, ansioso o en crisis?</span></span>
+            <div class="sub"><span class="en">NYC Well — free, 24/7, 200+ languages. Call or text 1-888-692-9355, or text "WELL" to 65173.</span><span class="es">NYC Well — gratis, 24/7, más de 200 idiomas. Llame o envíe texto al 1-888-692-9355, o envíe "WELL" al 65173.</span></div>
+          </span>
+        </a>
+        <a class="quickcall is-urgent" href="tel:988">
+          <span class="num">988</span>
+          <span>
+            <span class="label"><span class="en">Suicide & crisis lifeline</span><span class="es">Línea de crisis y suicidio</span></span>
+            <div class="sub"><span class="en">Free, 24/7 — call or text 988</span><span class="es">Gratis, 24/7 — llame o envíe texto al 988</span></div>
+          </span>
+        </a>
+        <a class="quickcall" href="tel:16466922273">
+          <span class="num" style="font-size:.62rem;"><span class="en">CARE</span><span class="es">CARE</span></span>
+          <span>
+            <span class="label"><span class="en">No insurance? No status? Still free care.</span><span class="es">¿Sin seguro? ¿Sin estatus? Aún hay atención gratis.</span></span>
+            <div class="sub"><span class="en">NYC Care — 646-692-2273, no immigration questions asked</span><span class="es">NYC Care — 646-692-2273, no preguntan estatus migratorio</span></div>
+          </span>
+        </a>
+      </div>
+
+      <h2><span class="en">Mental health support</span><span class="es">Apoyo de salud mental</span></h2>
+      <div class="card">
+        <h3>NYC Well</h3>
+        <div class="chips"><span class="chip"><span class="en">Free</span><span class="es">Gratis</span></span><span class="chip"><span class="en">24/7</span><span class="es">24/7</span></span><span class="chip"><span class="en">Confidential</span><span class="es">Confidencial</span></span></div>
+        <p><span class="en">Talk to a trained counselor by phone, text, or chat — for anxiety, depression, stress, grief, or substance use. They can also refer you to free ongoing counseling near you.</span><span class="es">Hable con un consejero capacitado por teléfono, texto o chat — por ansiedad, depresión, estrés, duelo o uso de sustancias. También pueden referirlo a consejería continua gratis cerca de usted.</span></p>
+        <div class="actions">
+          <a class="btn btn-call is-urgent" href="tel:18886929355"><span class="en">Call 1-888-692-9355</span><span class="es">Llamar al 1-888-692-9355</span></a>
+        </div>
+      </div>
+
+      <h2><span class="en">Free & low-cost clinics</span><span class="es">Clínicas gratis y de bajo costo</span></h2>
+      <div class="card">
+        <h3>NYC Care</h3>
+        <div class="chips"><span class="chip"><span class="en">Any immigration status</span><span class="es">Cualquier estatus migratorio</span></span></div>
+        <p><span class="en">Guaranteed access to doctors, mental health care, and prescriptions at NYC Health + Hospitals — fees start at $0 based on income. No health insurance required.</span><span class="es">Acceso garantizado a médicos, salud mental, y recetas en NYC Health + Hospitals — las tarifas empiezan en $0 según el ingreso. No se requiere seguro médico.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:16466922273"><span class="en">Call 646-692-2273</span><span class="es">Llamar al 646-692-2273</span></a>
+          <a class="btn btn-link" href="https://www.nyccare.nyc/enroll/" target="_blank" rel="noopener">nyccare.nyc</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="en">Find any free/sliding-scale clinic near you</span><span class="es">Encuentre cualquier clínica gratis o de tarifa variable cerca de usted</span></h3>
+        <p><span class="en">Federal locator for community health centers — you pay what you can afford based on income, even with no insurance.</span><span class="es">Buscador federal de centros de salud comunitarios — usted paga lo que pueda según su ingreso, aunque no tenga seguro.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://findahealthcenter.hrsa.gov/" target="_blank" rel="noopener"><span class="en">Find a clinic</span><span class="es">Buscar una clínica</span></a>
+        </div>
+      </div>
+
+      <h2><span class="en">Free tai chi, yoga & meditation</span><span class="es">Tai chi, yoga y meditación gratis</span></h2>
+      <div class="card">
+        <h3>Shape Up NYC</h3>
+        <div class="chips"><span class="chip"><span class="en">All 5 boroughs</span><span class="es">5 condados</span></span><span class="chip"><span class="en">No sign-up needed</span><span class="es">No requiere inscripción</span></span></div>
+        <p><span class="en">Free classes citywide — yoga, tai chi, meditation, Zumba, and more — at parks, rec centers, and libraries. Just show up; nothing to pay, nothing to sign up for in advance.</span><span class="es">Clases gratis en toda la ciudad — yoga, tai chi, meditación, Zumba y más — en parques, centros recreativos y bibliotecas. Solo preséntese; no hay que pagar ni inscribirse por adelantado.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.nycgovparks.org/events/shape-up-nyc" target="_blank" rel="noopener"><span class="en">Find a class near you</span><span class="es">Buscar una clase cerca de usted</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- JOBS -->
+    <section id="screen-jobs" class="screen" data-screen="jobs">
+      <h1><span class="en">Free job training & work clothes</span><span class="es">Capacitación laboral y ropa de trabajo gratis</span></h1>
+      <p class="lede">
+        <span class="en">All of this is free — training, certificates, and even the clothes for your interview.</span>
+        <span class="es">Todo esto es gratis — capacitación, certificados, e incluso la ropa para su entrevista.</span>
+      </p>
+
+      <div class="card">
+        <h3>Workforce1 <span class="en">Career Centers</span><span class="es">Centros de Carrera</span></h3>
+        <div class="chips"><span class="chip"><span class="en">18 centers, all boroughs</span><span class="es">18 centros, todos los condados</span></span><span class="chip"><span class="en">Free</span><span class="es">Gratis</span></span></div>
+        <p><span class="en">The city's own free job centers: one-on-one help finding work, resume and interview prep, and free training referrals. Open to anyone 18+ authorized to work in the US.</span><span class="es">Los centros de empleo gratuitos de la ciudad: ayuda personalizada para encontrar trabajo, preparación de currículum y entrevistas, y referencias a capacitación gratis. Abierto a cualquier persona de 18+ años autorizada para trabajar en EE.UU.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311 for your nearest center</span><span class="es">Llame al 311 para su centro más cercano</span></a>
+          <a class="btn btn-link" href="https://www.nyc.gov/site/sbs/careers/wf1-career-centers.page" target="_blank" rel="noopener"><span class="en">Find a center</span><span class="es">Buscar un centro</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Per Scholas</h3>
+        <div class="chips"><span class="chip"><span class="en">Free</span><span class="es">Gratis</span></span><span class="chip"><span class="en">Bronx, Brooklyn + partner sites</span><span class="es">Bronx, Brooklyn + otros sitios</span></span></div>
+        <p><span class="en">No-cost tech job training (12–15 weeks) with industry certifications, career coaching, and job placement help. No tech background needed.</span><span class="es">Capacitación tecnológica gratis (12–15 semanas) con certificaciones de la industria, asesoría profesional, y ayuda para conseguir empleo. No se necesita experiencia previa en tecnología.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://perscholas.org/locations/new-york/" target="_blank" rel="noopener">perscholas.org</a>
+        </div>
+      </div>
+
+      <h2><span class="en">Free classes & certificates at your library</span><span class="es">Clases y certificados gratis en su biblioteca</span></h2>
+      <p class="lede">
+        <span class="en">NYC has 3 separate library systems — use the one for your borough:</span>
+        <span class="es">NYC tiene 3 sistemas de bibliotecas separados — use el de su condado:</span>
+      </p>
+      <div class="card">
+        <h3>NYPL TechConnect</h3>
+        <div class="chips"><span class="chip">Manhattan</span><span class="chip"><span class="en">Bronx</span><span class="es">El Bronx</span></span><span class="chip">Staten Island</span></div>
+        <p><span class="en">100+ free tech classes, plus free LinkedIn Learning (16,000+ courses) with any library card.</span><span class="es">Más de 100 clases de tecnología gratis, además de LinkedIn Learning gratis (más de 16,000 cursos) con cualquier tarjeta de biblioteca.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:19172756975"><span class="en">Call 917-ASK-NYPL</span><span class="es">Llamar al 917-ASK-NYPL</span></a>
+          <a class="btn btn-link" href="https://www.nypl.org/node/251741" target="_blank" rel="noopener">nypl.org/techconnect</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="en">Brooklyn Public Library — tech classes</span><span class="es">Brooklyn Public Library — clases de tecnología</span></h3>
+        <div class="chips"><span class="chip">Brooklyn</span></div>
+        <p><span class="en">Free computer basics, resume help, and LevelUP — a free, tuition-free Google Cybersecurity Certificate program for library-card holders 18+.</span><span class="es">Conceptos básicos de computación gratis, ayuda con currículum, y LevelUP — un programa gratuito de Certificado de Ciberseguridad de Google para titulares de tarjeta de biblioteca de 18+ años.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.bklynlibrary.org/business/computer-help" target="_blank" rel="noopener">bklynlibrary.org</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3><span class="en">Queens Public Library — Job and Business Academy</span><span class="es">Queens Public Library — Academia de Empleo y Negocios</span></h3>
+        <div class="chips"><span class="chip">Queens</span></div>
+        <p><span class="en">Free computer and technology workshops, plus live online help with Microsoft Office and more.</span><span class="es">Talleres gratis de computación y tecnología, además de ayuda en vivo en línea con Microsoft Office y más.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.queenslibrary.org/programs-activities/job-business/technology-help" target="_blank" rel="noopener">queenslibrary.org</a>
+        </div>
+      </div>
+
+      <h2><span class="en">Free clothes for your interview</span><span class="es">Ropa gratis para su entrevista</span></h2>
+      <div class="card">
+        <h3><span class="en">Dress for Success — Greater NYC</span><span class="es">Dress for Success — Gran NYC</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Women</span><span class="es">Mujeres</span></span><span class="chip"><span class="en">Usually by referral</span><span class="es">Usualmente por referencia</span></span></div>
+        <p><span class="en">Free professional clothing, a personal shopper, and interview coaching. Referred by shelters, job programs, or agencies — if you're not connected to one, email them directly.</span><span class="es">Ropa profesional gratis, compradora personal, y preparación para entrevistas. Se accede por referencia de refugios, programas de empleo, o agencias — si no está conectado a uno, escríbales directamente.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:16462334959"><span class="en">Call 646-233-4959</span><span class="es">Llamar al 646-233-4959</span></a>
+          <a class="btn btn-link" href="https://newyork.dressforsuccess.org/" target="_blank" rel="noopener">newyork.dressforsuccess.org</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Career Gear</h3>
+        <div class="chips"><span class="chip"><span class="en">Men</span><span class="es">Hombres</span></span><span class="chip"><span class="en">Free</span><span class="es">Gratis</span></span></div>
+        <p><span class="en">The men's equivalent of Dress for Success — free interview suits and business attire, plus mentorship and job-readiness support for men entering the workforce.</span><span class="es">El equivalente para hombres de Dress for Success — trajes de entrevista y ropa de negocios gratis, además de mentoría y apoyo para hombres que entran a la fuerza laboral.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://careergear.org" target="_blank" rel="noopener">careergear.org</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TENANT / LEGAL -->
+    <section id="screen-legal" class="screen" data-screen="legal">
+      <h1><span class="en">Stop an eviction</span><span class="es">Detener un desalojo</span></h1>
+      <p class="lede">
+        <span class="en">All of these are 100% free. Contact them as soon as you get any notice from your landlord or the court — don't wait for a court date.</span>
+        <span class="es">Todos estos son 100% gratis. Contáctelos apenas reciba cualquier aviso de su propietario o de la corte — no espere a la fecha de la corte.</span>
+      </p>
+
+      <div class="card">
+        <h3><span class="en">The Legal Aid Society</span><span class="es">The Legal Aid Society</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Free lawyers, all 5 boroughs</span><span class="es">Abogados gratis, 5 condados</span></span></div>
+        <p><span class="en">The city's largest free legal provider — housing, eviction defense, benefits, immigration, and more, with an office in every borough. Call the borough office nearest you.</span><span class="es">El proveedor de servicios legales gratuitos más grande de la ciudad — vivienda, defensa contra desalojo, beneficios, inmigración, y más, con una oficina en cada condado. Llame a la oficina de su condado.</span></p>
+        <div class="actions">
+          <a class="btn btn-call is-urgent" href="tel:18886636680"><span class="en">Helpline: 888-663-6680</span><span class="es">Línea de ayuda: 888-663-6680</span></a>
+        </div>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:12124263000">Manhattan: 212-426-3000</a>
+          <a class="btn btn-call" href="tel:17187223100">Brooklyn: 718-722-3100</a>
+          <a class="btn btn-call" href="tel:17189914600"><span class="en">Bronx</span><span class="es">Bronx</span>: 718-991-4600</a>
+          <a class="btn btn-call" href="tel:17182862450">Queens: 718-286-2450</a>
+          <a class="btn btn-call" href="tel:13474225333">Staten Island: 347-422-5333</a>
+        </div>
+        <div class="actions">
+          <a class="btn btn-link" href="https://legalaidnyc.org/get-help/" target="_blank" rel="noopener">legalaidnyc.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Right to Counsel NYC</span><span class="es">Right to Counsel NYC</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Citywide</span><span class="es">Toda la ciudad</span></span><span class="chip"><span class="en">Income limits apply</span><span class="es">Aplican límites de ingreso</span></span></div>
+        <p><span class="en">A <strong>free lawyer</strong> in Housing Court if your income is roughly under 200% of the poverty line (about $53,300/yr for a family of 3). Ask even if you're not sure you qualify.</span><span class="es"><strong>Abogado gratis</strong> en la Corte de Vivienda si su ingreso es aproximadamente menor al 200% del nivel de pobreza (unos $53,300/año para una familia de 3). Pregunte aunque no esté seguro de calificar.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:17185571379"><span class="en">Call 718-557-1379</span><span class="es">Llamar al 718-557-1379</span></a>
+          <a class="btn btn-link" href="https://www.righttocounselnyc.org" target="_blank" rel="noopener">righttocounselnyc.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Met Council on Housing</span><span class="es">Met Council on Housing</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Citywide</span><span class="es">Toda la ciudad</span></span></div>
+        <p><span class="en">Free tenants' rights counseling hotline. Mon 1:30–8pm, Wed & Fri 1:30–5pm.</span><span class="es">Línea gratis de asesoría sobre derechos de inquilinos. Lun 1:30–8pm, Mié y Vie 1:30–5pm.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:12129790611"><span class="en">Call 212-979-0611</span><span class="es">Llamar al 212-979-0611</span></a>
+          <a class="btn btn-link" href="https://www.metcouncilonhousing.org" target="_blank" rel="noopener">metcouncilonhousing.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Goddard Riverside Law Project</span><span class="es">Goddard Riverside Law Project</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Restricted area</span><span class="es">Área restringida</span></span><span class="chip"><span class="en">Not for NYCHA</span><span class="es">No para NYCHA</span></span></div>
+        <p><span class="en">Free eviction defense, but <strong>only</strong> for: SRO tenants on Manhattan's west side from 14th St north, AND apartment tenants between W 100th–116th St, 5th Ave to Riverside Dr. Does <strong>not</strong> cover NYCHA buildings. Call to check if your address qualifies before you count on this one.</span><span class="es"><strong>Solo</strong> para: inquilinos de SRO en el lado oeste de Manhattan desde la calle 14 hacia el norte, e inquilinos de apartamentos entre las calles 100–116 Oeste, de la 5ta Ave a Riverside Dr. <strong>No</strong> cubre edificios de NYCHA. Llame para verificar si su dirección califica antes de contar con esta opción.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:12127999638"><span class="en">Call 212-799-9638</span><span class="es">Llamar al 212-799-9638</span></a>
+          <a class="btn btn-link" href="https://goddard.org/programs/fighting-homelessness/goddardlawproject/" target="_blank" rel="noopener">goddard.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Housing Court Answers</span><span class="es">Housing Court Answers</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Citywide</span><span class="es">Toda la ciudad</span></span><span class="chip"><span class="en">English & Spanish</span><span class="es">Inglés y español</span></span></div>
+        <p><span class="en">Free help understanding Housing Court, your rights, and referrals to free lawyers. Mon–Fri 9am–5pm.</span><span class="es">Ayuda gratis para entender la Corte de Vivienda, sus derechos, y referencias a abogados gratuitos. Lun–Vie 9am–5pm.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:12129624795"><span class="en">Call 212-962-4795</span><span class="es">Llamar al 212-962-4795</span></a>
+          <a class="btn btn-link" href="https://housingcourtanswers.org/answers/for-tenants/" target="_blank" rel="noopener">housingcourtanswers.org</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Who Owns What NYC</span><span class="es">Who Owns What NYC</span></h3>
+        <p><span class="en">Free tool to look up your landlord's full building portfolio and violation history — useful for court and for the press/officials if things get bad.</span><span class="es">Herramienta gratis para ver todo el portafolio de edificios de su propietario y su historial de violaciones — útil para la corte y para la prensa/funcionarios si la situación empeora.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://whoownswhat.nyc/en/" target="_blank" rel="noopener">whoownswhat.nyc</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Tenants & Neighbors</span><span class="es">Tenants & Neighbors</span></h3>
+        <p><span class="en">Free help organizing your building, especially in rent-stabilized or subsidized housing.</span><span class="es">Ayuda gratis para organizar su edificio, especialmente en vivienda con renta estabilizada o subsidiada.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://www.tandn.org" target="_blank" rel="noopener">tandn.org</a>
+        </div>
+      </div>
+
+      <h2><span class="en">Cash & prevention programs</span><span class="es">Programas de dinero y prevención</span></h2>
+
+      <div class="card">
+        <h3><span class="en">One Shot Deal (emergency rent grant)</span><span class="es">One Shot Deal (subsidio de emergencia para renta)</span></h3>
+        <p><span class="en">A one-time HRA cash grant paid to your landlord to cover back rent and stop an eviction. Apply through ACCESS HRA.</span><span class="es">Un subsidio único de HRA que se paga directamente al propietario para cubrir renta atrasada y detener un desalojo. Solicítelo por ACCESS HRA.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:17185571399"><span class="en">Call HRA InfoLine</span><span class="es">Llamar a la Línea de HRA</span></a>
+          <a class="btn btn-link" href="https://access.nyc.gov/programs/one-shot-deal/" target="_blank" rel="noopener">access.nyc.gov</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Homebase</h3>
+        <div class="chips"><span class="chip"><span class="en">23 sites, all boroughs</span><span class="es">23 sitios, todos los condados</span></span></div>
+        <p><span class="en">Free eviction-prevention office near you — rent help, budgeting, benefits, sometimes help finding a new apartment before you lose the current one.</span><span class="es">Oficina gratis de prevención de desalojo cerca de usted — ayuda con renta, presupuesto, beneficios, y a veces ayuda a encontrar un nuevo apartamento antes de perder el actual.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311 for your local site</span><span class="es">Llame al 311 para su sitio local</span></a>
+          <a class="btn btn-link" href="https://www.nyc.gov/homebase" target="_blank" rel="noopener">nyc.gov/homebase</a>
+        </div>
+      </div>
+
+      <h2><span class="en">If heat, hot water, or gas is out</span><span class="es">Si no hay calefacción, agua caliente o gas</span></h2>
+      <div class="warn">
+        <strong><span class="en">Children struggling to breathe, or apartment under 55°F?</span><span class="es">¿Los niños tienen dificultad para respirar, o el apartamento está por debajo de 13°C (55°F)?</span></strong>
+        <span class="en">Call 911, or go to the nearest hospital ER. They cannot turn away a family in a utility crisis. Never use an unauthorized space heater near a gas line — demand electric oil-filled heaters from your landlord.</span>
+        <span class="es">Llame al 911, o vaya a la sala de emergencias más cercana. No pueden rechazar a una familia en crisis de servicios. Nunca use un calentador de espacio no autorizado cerca de una línea de gas — exija calentadores eléctricos de aceite a su propietario.</span>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Call 311 — say this exact script</span><span class="es">Llame al 311 — diga este guion exacto</span></h3>
+        <p><span class="en">"I have an open complaint for no heat/hot water. This is a life-safety emergency. I need a referral to HPD's Emergency Repair Program (ERP)."</span><span class="es">"Tengo una queja abierta por falta de calefacción/agua caliente. Esto es una emergencia de seguridad. Necesito una referencia al Programa de Reparación de Emergencia (ERP) de HPD."</span></p>
+        <div class="actions">
+          <a class="btn btn-call is-urgent" href="tel:311"><span class="en">Call 311</span><span class="es">Llamar al 311</span></a>
+        </div>
+      </div>
+
+      <div class="notice">
+        <strong><span class="en">The "double-dip": get help two ways at once</span><span class="es">El "doble beneficio": obtenga ayuda de dos formas a la vez</span></strong>
+        <span class="en">1) If you have renter's insurance, call now — "Loss of Use" coverage pays for a hotel and meals immediately. 2) Under NY Real Property Law §235-b (Warranty of Habitability), you don't have to pay rent for days the unit is unlivable — keep photos and a log of temperatures. 3) Go to Housing Court and file a free "Emergency HP Proceeding" — a judge can order repairs within 24–48 hours.</span>
+        <span class="es">1) Si tiene seguro de inquilino, llame ahora — la cobertura de "Pérdida de Uso" paga hotel y comidas de inmediato. 2) Bajo la Ley de Propiedad Real de NY §235-b (Garantía de Habitabilidad), no tiene que pagar renta los días que la unidad sea inhabitable — guarde fotos y un registro de temperaturas. 3) Vaya a la Corte de Vivienda y presente gratis un "Procedimiento de Emergencia HP" — un juez puede ordenar reparaciones en 24–48 horas.</span>
+      </div>
+
+      <h2><span class="en">Borough contacts — all 5 boroughs</span><span class="es">Contactos por condado — los 5 condados</span></h2>
+      <p class="lede">
+        <span class="en">Each borough has its own Housing Court, its own HPD code-enforcement office, and its own Borough President. Find the ones near you below.</span>
+        <span class="es">Cada condado tiene su propia Corte de Vivienda, su propia oficina de cumplimiento de código de HPD, y su propio Presidente de Condado. Encuentre los suyos abajo.</span>
+      </p>
+      <div class="notice" style="margin-top:0;">
+        <strong><span class="en">Find your City Council member</span><span class="es">Encuentre a su concejal</span></strong>
+        <span class="en">Council members can sometimes push HPD or DHS faster than 311 alone. Look yours up by address:</span>
+        <span class="es">Los concejales a veces pueden agilizar a HPD o DHS más rápido que solo el 311. Búsquelo por dirección:</span>
+        <div class="actions">
+          <a class="btn btn-link" href="https://council.nyc.gov/districts/" target="_blank" rel="noopener">council.nyc.gov/districts</a>
+        </div>
+      </div>
+
+      <div class="filterrow" id="boroughFilters">
+        <button class="filterbtn is-active" data-filter="all"><span class="en">All</span><span class="es">Todos</span></button>
+        <button class="filterbtn" data-filter="manhattan">Manhattan</button>
+        <button class="filterbtn" data-filter="brooklyn">Brooklyn</button>
+        <button class="filterbtn" data-filter="queens">Queens</button>
+        <button class="filterbtn" data-filter="bronx"><span class="en">Bronx</span><span class="es">El Bronx</span></button>
+        <button class="filterbtn" data-filter="statenisland"><span class="en">Staten Island</span><span class="es">Staten Island</span></button>
+      </div>
+
+      <div id="boroughCards">
+        <div class="card" data-borough="manhattan">
+          <span class="eyebrow">Manhattan</span>
+          <h3><span class="en">Manhattan contacts</span><span class="es">Contactos de Manhattan</span></h3>
+          <p><strong><span class="en">Housing Court</span><span class="es">Corte de Vivienda</span></strong> — 111 Centre St, New York, NY 10013</p>
+          <p><strong>HPD <span class="en">Service Center</span><span class="es">Centro de Servicio</span></strong> — 94 Old Broadway, 7th Fl, New York, NY 10027</p>
+          <p><strong><span class="en">Borough President</span><span class="es">Presidente del Condado</span></strong> — Brad Hoylman-Sigal</p>
+          <div class="actions">
+            <a class="btn btn-call" href="tel:12128635030"><span class="en">Call HPD Manhattan</span><span class="es">Llamar a HPD Manhattan</span></a>
+            <a class="btn btn-link" href="https://www.manhattanbp.nyc.gov" target="_blank" rel="noopener"><span class="en">Borough President's office</span><span class="es">Oficina del Presidente del Condado</span></a>
+          </div>
+        </div>
+
+        <div class="card" data-borough="brooklyn">
+          <span class="eyebrow">Brooklyn</span>
+          <h3><span class="en">Brooklyn contacts</span><span class="es">Contactos de Brooklyn</span></h3>
+          <p><strong><span class="en">Housing Court</span><span class="es">Corte de Vivienda</span></strong> — 141 Livingston St, Brooklyn, NY 11201</p>
+          <p><strong>HPD <span class="en">Service Center</span><span class="es">Centro de Servicio</span></strong> — 210 Joralemon St, 13th Fl, Brooklyn, NY 11201</p>
+          <p><strong><span class="en">Borough President</span><span class="es">Presidente del Condado</span></strong> — Antonio Reynoso — 209 Joralemon St, Brooklyn, NY 11201</p>
+          <div class="actions">
+            <a class="btn btn-call" href="tel:12128637400"><span class="en">Call HPD Brooklyn</span><span class="es">Llamar a HPD Brooklyn</span></a>
+            <a class="btn btn-call" href="tel:17188023700"><span class="en">Borough President</span><span class="es">Presidente del Condado</span>: 718-802-3700</a>
+          </div>
+        </div>
+
+        <div class="card" data-borough="queens">
+          <span class="eyebrow">Queens</span>
+          <h3><span class="en">Queens contacts</span><span class="es">Contactos de Queens</span></h3>
+          <p><strong><span class="en">Housing Court</span><span class="es">Corte de Vivienda</span></strong> — 89-17 Sutphin Blvd, Jamaica, NY 11435</p>
+          <p><strong>HPD <span class="en">Service Center</span><span class="es">Centro de Servicio</span></strong> — 120-55 Queens Blvd, Kew Gardens, NY 11424</p>
+          <p><strong><span class="en">Borough President</span><span class="es">Presidente del Condado</span></strong> — Donovan Richards Jr. — 120-55 Queens Blvd, Kew Gardens, NY 11424</p>
+          <div class="actions">
+            <a class="btn btn-call" href="tel:12128635990"><span class="en">Call HPD Queens</span><span class="es">Llamar a HPD Queens</span></a>
+            <a class="btn btn-call" href="tel:17182863000"><span class="en">Borough President</span><span class="es">Presidente del Condado</span>: 718-286-3000</a>
+          </div>
+        </div>
+
+        <div class="card" data-borough="bronx">
+          <span class="eyebrow"><span class="en">Bronx</span><span class="es">El Bronx</span></span>
+          <h3><span class="en">Bronx contacts</span><span class="es">Contactos del Bronx</span></h3>
+          <p><strong><span class="en">Housing Court</span><span class="es">Corte de Vivienda</span></strong> — 1118 Grand Concourse, Bronx, NY 10456</p>
+          <p><strong>HPD <span class="en">Service Center</span><span class="es">Centro de Servicio</span></strong> — 1932 Arthur Ave, 3rd Fl, Bronx, NY 10457</p>
+          <p><strong><span class="en">Borough President</span><span class="es">Presidenta del Condado</span></strong> — Vanessa Gibson</p>
+          <p><strong><span class="en">St. Barnabas Hospital ER</span><span class="es">Sala de Emergencias St. Barnabas</span></strong> — 4422 Third Ave, Bronx, NY 10457 — <span class="en">cannot turn away a family in a utility crisis</span><span class="es">no puede rechazar a una familia en crisis de servicios</span></p>
+          <p><strong><span class="en">Council Member</span><span class="es">Concejal</span> (D15) Oswald Feliz</strong> · <strong><span class="en">Council Member</span><span class="es">Concejal</span> (D14) Pierina Sanchez</strong></p>
+          <div class="actions">
+            <a class="btn btn-call" href="tel:12128637050"><span class="en">Call HPD Bronx</span><span class="es">Llamar a HPD Bronx</span></a>
+            <a class="btn btn-call" href="tel:17188428100">D15: 718-842-8100</a>
+            <a class="btn btn-call" href="tel:13475902874">D14: 347-590-2874</a>
+            <a class="btn btn-call" href="tel:17185903500"><span class="en">Borough President</span><span class="es">Presidenta</span>: 718-590-3500</a>
+          </div>
+        </div>
+
+        <div class="card" data-borough="statenisland">
+          <span class="eyebrow">Staten Island</span>
+          <h3><span class="en">Staten Island contacts</span><span class="es">Contactos de Staten Island</span></h3>
+          <p><strong><span class="en">Housing Court</span><span class="es">Corte de Vivienda</span></strong> — 927 Castleton Ave, Staten Island, NY 10310</p>
+          <p><strong>HPD <span class="en">Service Center</span><span class="es">Centro de Servicio</span></strong> — 10 Richmond Terrace, Staten Island, NY 10301</p>
+          <p><strong><span class="en">Borough President</span><span class="es">Presidente del Condado</span></strong> — Vito Fossella — 10 Richmond Terrace, Staten Island, NY 10301</p>
+          <div class="actions">
+            <a class="btn btn-call" href="tel:12128638100"><span class="en">Call HPD Staten Island</span><span class="es">Llamar a HPD Staten Island</span></a>
+            <a class="btn btn-call" href="tel:17188162000"><span class="en">Borough President</span><span class="es">Presidente del Condado</span>: 718-816-2000</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="lede" style="margin-top:.5rem;">
+        <span class="en">Office hours and staff change — if a number doesn't connect, ask 311 to transfer you or give you the current number.</span>
+        <span class="es">El horario y el personal cambian — si un número no conecta, pida al 311 que lo transfiera o le dé el número actual.</span>
+      </p>
+    </section>
+
+    <!-- MORE -->
+    <section id="screen-more" class="screen" data-screen="more">
+      <h1><span class="en">More resources</span><span class="es">Más recursos</span></h1>
+
+            <div class="card qrcard">
+        <h3><span class="en">Scan to open this app</span><span class="es">Escanee para abrir esta app</span></h3>
+        <div class="qrpanel"><svg viewBox="0 0 53 53" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QR code linking to this app"><rect x="0" y="0" width="53" height="53" fill="#ffffff"/><g fill="#000000"><rect x="8" y="8" width="7" height="1"/><rect x="18" y="8" width="1" height="1"/><rect x="20" y="8" width="2" height="1"/><rect x="23" y="8" width="1" height="1"/><rect x="29" y="8" width="4" height="1"/><rect x="34" y="8" width="1" height="1"/><rect x="38" y="8" width="7" height="1"/><rect x="8" y="9" width="1" height="1"/><rect x="14" y="9" width="1" height="1"/><rect x="17" y="9" width="1" height="1"/><rect x="19" y="9" width="1" height="1"/><rect x="22" y="9" width="1" height="1"/><rect x="26" y="9" width="1" height="1"/><rect x="28" y="9" width="1" height="1"/><rect x="35" y="9" width="2" height="1"/><rect x="38" y="9" width="1" height="1"/><rect x="44" y="9" width="1" height="1"/><rect x="8" y="10" width="1" height="1"/><rect x="10" y="10" width="3" height="1"/><rect x="14" y="10" width="1" height="1"/><rect x="16" y="10" width="4" height="1"/><rect x="21" y="10" width="1" height="1"/><rect x="29" y="10" width="1" height="1"/><rect x="31" y="10" width="1" height="1"/><rect x="34" y="10" width="1" height="1"/><rect x="38" y="10" width="1" height="1"/><rect x="40" y="10" width="3" height="1"/><rect x="44" y="10" width="1" height="1"/><rect x="8" y="11" width="1" height="1"/><rect x="10" y="11" width="3" height="1"/><rect x="14" y="11" width="1" height="1"/><rect x="16" y="11" width="1" height="1"/><rect x="19" y="11" width="2" height="1"/><rect x="25" y="11" width="1" height="1"/><rect x="30" y="11" width="1" height="1"/><rect x="33" y="11" width="3" height="1"/><rect x="38" y="11" width="1" height="1"/><rect x="40" y="11" width="3" height="1"/><rect x="44" y="11" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="10" y="12" width="3" height="1"/><rect x="14" y="12" width="1" height="1"/><rect x="16" y="12" width="1" height="1"/><rect x="18" y="12" width="1" height="1"/><rect x="22" y="12" width="2" height="1"/><rect x="25" y="12" width="7" height="1"/><rect x="36" y="12" width="1" height="1"/><rect x="38" y="12" width="1" height="1"/><rect x="40" y="12" width="3" height="1"/><rect x="44" y="12" width="1" height="1"/><rect x="8" y="13" width="1" height="1"/><rect x="14" y="13" width="1" height="1"/><rect x="16" y="13" width="4" height="1"/><rect x="21" y="13" width="1" height="1"/><rect x="24" y="13" width="2" height="1"/><rect x="29" y="13" width="2" height="1"/><rect x="34" y="13" width="2" height="1"/><rect x="38" y="13" width="1" height="1"/><rect x="44" y="13" width="1" height="1"/><rect x="8" y="14" width="7" height="1"/><rect x="16" y="14" width="1" height="1"/><rect x="18" y="14" width="1" height="1"/><rect x="20" y="14" width="1" height="1"/><rect x="22" y="14" width="1" height="1"/><rect x="24" y="14" width="1" height="1"/><rect x="26" y="14" width="1" height="1"/><rect x="28" y="14" width="1" height="1"/><rect x="30" y="14" width="1" height="1"/><rect x="32" y="14" width="1" height="1"/><rect x="34" y="14" width="1" height="1"/><rect x="36" y="14" width="1" height="1"/><rect x="38" y="14" width="7" height="1"/><rect x="16" y="15" width="2" height="1"/><rect x="19" y="15" width="1" height="1"/><rect x="21" y="15" width="1" height="1"/><rect x="23" y="15" width="1" height="1"/><rect x="25" y="15" width="6" height="1"/><rect x="32" y="15" width="1" height="1"/><rect x="36" y="15" width="1" height="1"/><rect x="8" y="16" width="1" height="1"/><rect x="10" y="16" width="5" height="1"/><rect x="18" y="16" width="1" height="1"/><rect x="21" y="16" width="1" height="1"/><rect x="24" y="16" width="1" height="1"/><rect x="29" y="16" width="1" height="1"/><rect x="33" y="16" width="2" height="1"/><rect x="36" y="16" width="1" height="1"/><rect x="38" y="16" width="5" height="1"/><rect x="8" y="17" width="3" height="1"/><rect x="13" y="17" width="1" height="1"/><rect x="15" y="17" width="1" height="1"/><rect x="17" y="17" width="1" height="1"/><rect x="20" y="17" width="1" height="1"/><rect x="23" y="17" width="1" height="1"/><rect x="26" y="17" width="1" height="1"/><rect x="28" y="17" width="2" height="1"/><rect x="31" y="17" width="3" height="1"/><rect x="39" y="17" width="1" height="1"/><rect x="41" y="17" width="3" height="1"/><rect x="8" y="18" width="1" height="1"/><rect x="11" y="18" width="8" height="1"/><rect x="20" y="18" width="1" height="1"/><rect x="22" y="18" width="6" height="1"/><rect x="29" y="18" width="2" height="1"/><rect x="35" y="18" width="2" height="1"/><rect x="38" y="18" width="2" height="1"/><rect x="41" y="18" width="1" height="1"/><rect x="43" y="18" width="2" height="1"/><rect x="12" y="19" width="1" height="1"/><rect x="18" y="19" width="2" height="1"/><rect x="23" y="19" width="1" height="1"/><rect x="27" y="19" width="3" height="1"/><rect x="34" y="19" width="1" height="1"/><rect x="37" y="19" width="1" height="1"/><rect x="39" y="19" width="3" height="1"/><rect x="44" y="19" width="1" height="1"/><rect x="8" y="20" width="2" height="1"/><rect x="12" y="20" width="1" height="1"/><rect x="14" y="20" width="1" height="1"/><rect x="16" y="20" width="4" height="1"/><rect x="21" y="20" width="5" height="1"/><rect x="27" y="20" width="2" height="1"/><rect x="30" y="20" width="1" height="1"/><rect x="32" y="20" width="2" height="1"/><rect x="35" y="20" width="1" height="1"/><rect x="37" y="20" width="2" height="1"/><rect x="40" y="20" width="5" height="1"/><rect x="8" y="21" width="4" height="1"/><rect x="15" y="21" width="1" height="1"/><rect x="17" y="21" width="3" height="1"/><rect x="22" y="21" width="1" height="1"/><rect x="26" y="21" width="2" height="1"/><rect x="31" y="21" width="1" height="1"/><rect x="39" y="21" width="1" height="1"/><rect x="43" y="21" width="1" height="1"/><rect x="9" y="22" width="2" height="1"/><rect x="12" y="22" width="3" height="1"/><rect x="16" y="22" width="1" height="1"/><rect x="18" y="22" width="2" height="1"/><rect x="21" y="22" width="1" height="1"/><rect x="23" y="22" width="2" height="1"/><rect x="26" y="22" width="1" height="1"/><rect x="28" y="22" width="1" height="1"/><rect x="30" y="22" width="1" height="1"/><rect x="34" y="22" width="3" height="1"/><rect x="38" y="22" width="4" height="1"/><rect x="44" y="22" width="1" height="1"/><rect x="8" y="23" width="1" height="1"/><rect x="10" y="23" width="1" height="1"/><rect x="12" y="23" width="2" height="1"/><rect x="16" y="23" width="5" height="1"/><rect x="23" y="23" width="2" height="1"/><rect x="27" y="23" width="2" height="1"/><rect x="31" y="23" width="1" height="1"/><rect x="35" y="23" width="6" height="1"/><rect x="44" y="23" width="1" height="1"/><rect x="8" y="24" width="1" height="1"/><rect x="10" y="24" width="2" height="1"/><rect x="14" y="24" width="1" height="1"/><rect x="16" y="24" width="1" height="1"/><rect x="19" y="24" width="1" height="1"/><rect x="22" y="24" width="1" height="1"/><rect x="26" y="24" width="6" height="1"/><rect x="33" y="24" width="4" height="1"/><rect x="38" y="24" width="1" height="1"/><rect x="40" y="24" width="1" height="1"/><rect x="42" y="24" width="1" height="1"/><rect x="15" y="25" width="3" height="1"/><rect x="22" y="25" width="3" height="1"/><rect x="31" y="25" width="3" height="1"/><rect x="37" y="25" width="1" height="1"/><rect x="42" y="25" width="2" height="1"/><rect x="8" y="26" width="2" height="1"/><rect x="12" y="26" width="5" height="1"/><rect x="21" y="26" width="1" height="1"/><rect x="28" y="26" width="2" height="1"/><rect x="33" y="26" width="5" height="1"/><rect x="39" y="26" width="2" height="1"/><rect x="43" y="26" width="2" height="1"/><rect x="8" y="27" width="1" height="1"/><rect x="10" y="27" width="2" height="1"/><rect x="13" y="27" width="1" height="1"/><rect x="16" y="27" width="1" height="1"/><rect x="19" y="27" width="1" height="1"/><rect x="24" y="27" width="1" height="1"/><rect x="26" y="27" width="1" height="1"/><rect x="29" y="27" width="2" height="1"/><rect x="34" y="27" width="3" height="1"/><rect x="38" y="27" width="2" height="1"/><rect x="41" y="27" width="1" height="1"/><rect x="44" y="27" width="1" height="1"/><rect x="10" y="28" width="1" height="1"/><rect x="13" y="28" width="3" height="1"/><rect x="17" y="28" width="2" height="1"/><rect x="20" y="28" width="1" height="1"/><rect x="25" y="28" width="2" height="1"/><rect x="30" y="28" width="1" height="1"/><rect x="32" y="28" width="3" height="1"/><rect x="37" y="28" width="2" height="1"/><rect x="40" y="28" width="1" height="1"/><rect x="42" y="28" width="1" height="1"/><rect x="9" y="29" width="1" height="1"/><rect x="13" y="29" width="1" height="1"/><rect x="15" y="29" width="2" height="1"/><rect x="19" y="29" width="4" height="1"/><rect x="25" y="29" width="1" height="1"/><rect x="27" y="29" width="1" height="1"/><rect x="29" y="29" width="1" height="1"/><rect x="31" y="29" width="2" height="1"/><rect x="36" y="29" width="1" height="1"/><rect x="41" y="29" width="1" height="1"/><rect x="43" y="29" width="1" height="1"/><rect x="9" y="30" width="1" height="1"/><rect x="13" y="30" width="2" height="1"/><rect x="17" y="30" width="1" height="1"/><rect x="20" y="30" width="1" height="1"/><rect x="22" y="30" width="2" height="1"/><rect x="25" y="30" width="1" height="1"/><rect x="29" y="30" width="1" height="1"/><rect x="33" y="30" width="3" height="1"/><rect x="37" y="30" width="5" height="1"/><rect x="44" y="30" width="1" height="1"/><rect x="8" y="31" width="1" height="1"/><rect x="11" y="31" width="1" height="1"/><rect x="13" y="31" width="1" height="1"/><rect x="15" y="31" width="2" height="1"/><rect x="18" y="31" width="2" height="1"/><rect x="21" y="31" width="2" height="1"/><rect x="24" y="31" width="3" height="1"/><rect x="28" y="31" width="3" height="1"/><rect x="35" y="31" width="6" height="1"/><rect x="43" y="31" width="1" height="1"/><rect x="8" y="32" width="1" height="1"/><rect x="13" y="32" width="2" height="1"/><rect x="17" y="32" width="2" height="1"/><rect x="20" y="32" width="1" height="1"/><rect x="23" y="32" width="2" height="1"/><rect x="29" y="32" width="1" height="1"/><rect x="33" y="32" width="3" height="1"/><rect x="37" y="32" width="4" height="1"/><rect x="42" y="32" width="1" height="1"/><rect x="44" y="32" width="1" height="1"/><rect x="8" y="33" width="2" height="1"/><rect x="11" y="33" width="1" height="1"/><rect x="15" y="33" width="4" height="1"/><rect x="20" y="33" width="4" height="1"/><rect x="26" y="33" width="1" height="1"/><rect x="28" y="33" width="5" height="1"/><rect x="8" y="34" width="1" height="1"/><rect x="11" y="34" width="5" height="1"/><rect x="23" y="34" width="5" height="1"/><rect x="30" y="34" width="1" height="1"/><rect x="32" y="34" width="2" height="1"/><rect x="35" y="34" width="2" height="1"/><rect x="38" y="34" width="1" height="1"/><rect x="41" y="34" width="1" height="1"/><rect x="43" y="34" width="2" height="1"/><rect x="8" y="35" width="1" height="1"/><rect x="13" y="35" width="1" height="1"/><rect x="16" y="35" width="2" height="1"/><rect x="19" y="35" width="3" height="1"/><rect x="23" y="35" width="1" height="1"/><rect x="26" y="35" width="4" height="1"/><rect x="32" y="35" width="1" height="1"/><rect x="34" y="35" width="1" height="1"/><rect x="37" y="35" width="2" height="1"/><rect x="40" y="35" width="2" height="1"/><rect x="44" y="35" width="1" height="1"/><rect x="8" y="36" width="1" height="1"/><rect x="11" y="36" width="5" height="1"/><rect x="17" y="36" width="3" height="1"/><rect x="21" y="36" width="1" height="1"/><rect x="23" y="36" width="3" height="1"/><rect x="27" y="36" width="2" height="1"/><rect x="30" y="36" width="1" height="1"/><rect x="32" y="36" width="9" height="1"/><rect x="42" y="36" width="3" height="1"/><rect x="16" y="37" width="1" height="1"/><rect x="18" y="37" width="2" height="1"/><rect x="22" y="37" width="1" height="1"/><rect x="26" y="37" width="3" height="1"/><rect x="31" y="37" width="1" height="1"/><rect x="35" y="37" width="2" height="1"/><rect x="40" y="37" width="2" height="1"/><rect x="8" y="38" width="7" height="1"/><rect x="17" y="38" width="1" height="1"/><rect x="19" y="38" width="2" height="1"/><rect x="23" y="38" width="1" height="1"/><rect x="26" y="38" width="1" height="1"/><rect x="28" y="38" width="1" height="1"/><rect x="30" y="38" width="1" height="1"/><rect x="32" y="38" width="1" height="1"/><rect x="34" y="38" width="1" height="1"/><rect x="36" y="38" width="1" height="1"/><rect x="38" y="38" width="1" height="1"/><rect x="40" y="38" width="1" height="1"/><rect x="42" y="38" width="3" height="1"/><rect x="8" y="39" width="1" height="1"/><rect x="14" y="39" width="1" height="1"/><rect x="16" y="39" width="5" height="1"/><rect x="22" y="39" width="1" height="1"/><rect x="27" y="39" width="1" height="1"/><rect x="36" y="39" width="1" height="1"/><rect x="40" y="39" width="2" height="1"/><rect x="43" y="39" width="2" height="1"/><rect x="8" y="40" width="1" height="1"/><rect x="10" y="40" width="3" height="1"/><rect x="14" y="40" width="1" height="1"/><rect x="16" y="40" width="2" height="1"/><rect x="20" y="40" width="1" height="1"/><rect x="22" y="40" width="2" height="1"/><rect x="26" y="40" width="1" height="1"/><rect x="28" y="40" width="3" height="1"/><rect x="33" y="40" width="1" height="1"/><rect x="35" y="40" width="6" height="1"/><rect x="42" y="40" width="1" height="1"/><rect x="44" y="40" width="1" height="1"/><rect x="8" y="41" width="1" height="1"/><rect x="10" y="41" width="3" height="1"/><rect x="14" y="41" width="1" height="1"/><rect x="16" y="41" width="5" height="1"/><rect x="22" y="41" width="3" height="1"/><rect x="29" y="41" width="1" height="1"/><rect x="31" y="41" width="4" height="1"/><rect x="37" y="41" width="2" height="1"/><rect x="40" y="41" width="1" height="1"/><rect x="44" y="41" width="1" height="1"/><rect x="8" y="42" width="1" height="1"/><rect x="10" y="42" width="3" height="1"/><rect x="14" y="42" width="1" height="1"/><rect x="16" y="42" width="1" height="1"/><rect x="18" y="42" width="2" height="1"/><rect x="21" y="42" width="1" height="1"/><rect x="25" y="42" width="1" height="1"/><rect x="28" y="42" width="2" height="1"/><rect x="32" y="42" width="3" height="1"/><rect x="37" y="42" width="1" height="1"/><rect x="41" y="42" width="4" height="1"/><rect x="8" y="43" width="1" height="1"/><rect x="14" y="43" width="1" height="1"/><rect x="19" y="43" width="1" height="1"/><rect x="24" y="43" width="1" height="1"/><rect x="26" y="43" width="1" height="1"/><rect x="29" y="43" width="2" height="1"/><rect x="32" y="43" width="1" height="1"/><rect x="34" y="43" width="1" height="1"/><rect x="36" y="43" width="1" height="1"/><rect x="38" y="43" width="1" height="1"/><rect x="40" y="43" width="2" height="1"/><rect x="44" y="43" width="1" height="1"/><rect x="8" y="44" width="7" height="1"/><rect x="16" y="44" width="4" height="1"/><rect x="22" y="44" width="1" height="1"/><rect x="24" y="44" width="3" height="1"/><rect x="30" y="44" width="6" height="1"/><rect x="37" y="44" width="1" height="1"/><rect x="40" y="44" width="1" height="1"/><rect x="42" y="44" width="3" height="1"/></g></svg></div>
+        <p><span class="en">Point your phone's camera at this code — no download needed.</span><span class="es">Apunte la cámara de su teléfono a este código — no se necesita descargar nada.</span></p>
+        <p class="qrurl">claude.ai/code/artifact/6acd2f26-1c88-4687-a5c3-334dfd805575</p>
+      </div>
+
+      <h2 style="margin-top:.2rem;"><span class="en">Community & safety</span><span class="es">Comunidad y seguridad</span></h2>
+      <div class="card">
+        <h3><span class="en">NYPD Community Affairs</span><span class="es">Asuntos Comunitarios de NYPD</span></h3>
+        <div class="chips"><span class="chip"><span class="en">Every precinct, all boroughs</span><span class="es">Cada precinto, todos los condados</span></span></div>
+        <p><span class="en">Every one of NYC's 77 precincts has a Community Affairs officer whose job is to connect residents with the police in a non-emergency way — safety concerns, youth programs, community council meetings. Look up your local precinct to find theirs.</span><span class="es">Cada uno de los 77 precintos de NYC tiene un oficial de Asuntos Comunitarios cuyo trabajo es conectar a los residentes con la policía sin que sea una emergencia — preocupaciones de seguridad, programas juveniles, reuniones del consejo comunitario. Busque su precinto local para encontrar al suyo.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:16466105323"><span class="en">Community Affairs Bureau</span><span class="es">Oficina de Asuntos Comunitarios</span>: 646-610-5323</a>
+          <a class="btn btn-link" href="https://www.nyc.gov/site/nypd/bureaus/patrol/precincts-landing.page" target="_blank" rel="noopener"><span class="en">Find your precinct</span><span class="es">Buscar su precinto</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Free household items</span><span class="es">Artículos gratis para el hogar</span></h3>
+        <p><span class="en">Trash Nothing — a free local giveaway network for furniture, clothes, and household goods people no longer need.</span><span class="es">Trash Nothing — una red local gratuita donde la gente regala muebles, ropa y artículos del hogar que ya no necesita.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://trashnothing.com" target="_blank" rel="noopener">trashnothing.com</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">Warming & cooling centers</span><span class="es">Centros de calor y frío</span></h3>
+        <p><span class="en">During extreme heat or cold, call 311 anytime for the nearest open center.</span><span class="es">Durante calor o frío extremo, llame al 311 en cualquier momento para el centro abierto más cercano.</span></p>
+        <div class="actions">
+          <a class="btn btn-call" href="tel:311"><span class="en">Call 311</span><span class="es">Llamar al 311</span></a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">NYC Open Data — shelter numbers</span><span class="es">NYC Open Data — cifras de refugios</span></h3>
+        <p><span class="en">Public dataset with citywide shelter census figures, for advocates, journalists, or anyone who wants the raw numbers.</span><span class="es">Conjunto de datos público con cifras del censo de refugios de toda la ciudad, para defensores, periodistas o cualquiera que quiera los números en bruto.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://data.cityofnewyork.us/Social-Services/DHS-Homeless-Shelter-Census/3pjg-ncn9" target="_blank" rel="noopener"><span class="en">Open dataset</span><span class="es">Abrir datos</span></a>
+          <a class="btn btn-link" href="https://www.nyc.gov/site/dhs/index.page" target="_blank" rel="noopener">nyc.gov/dhs</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="en">NYC Open Data — full portal</span><span class="es">NYC Open Data — portal completo</span></h3>
+        <p><span class="en">The city's whole open-data library — every public dataset it publishes, not just shelters: HPD violations, food-pantry funding, evictions, and more. Useful if you or someone helping you wants to dig deeper.</span><span class="es">Toda la biblioteca de datos abiertos de la ciudad — todos los conjuntos de datos públicos que publica, no solo refugios: violaciones de HPD, financiamiento de despensas, desalojos, y más. Útil si usted o alguien que lo ayuda quiere investigar más a fondo.</span></p>
+        <div class="actions">
+          <a class="btn btn-link" href="https://opendata.cityofnewyork.us/" target="_blank" rel="noopener">opendata.cityofnewyork.us</a>
+        </div>
+      </div>
+
+      <h2><span class="en">Language</span><span class="es">Idioma</span></h2>
+      <div class="filterrow" style="margin-bottom:.5rem;">
+        <button class="filterbtn" id="moreLangEn">English</button>
+        <button class="filterbtn" id="moreLangEs">Español</button>
+      </div>
+
+      <footer class="disclaimer">
+        <span class="en">This is an independent, unofficial guide built from public NYC sources as of August 2026. Programs, addresses, and phone numbers change — always confirm with 311 or the organization directly before you rely on something here.</span>
+        <span class="es">Esta es una guía independiente y no oficial, creada con fuentes públicas de NYC a partir de agosto de 2026. Los programas, direcciones y números telefónicos cambian — siempre confirme con el 311 o la organización directamente antes de confiar en algo aquí.</span>
+      </footer>
+    </section>
+
+  </main>
+
+  <nav class="bottomnav" aria-label="Main">
+    <button class="navbtn is-active" data-target="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9v-5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V20h2.5a1 1 0 0 0 1-1v-9"/></svg>
+      <span class="navlabel"><span class="en">Home</span><span class="es">Inicio</span></span>
+    </button>
+    <button class="navbtn" data-target="shelter">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="7" rx="1.4"/><path d="M4 11V8.5A1.5 1.5 0 0 1 5.5 7H10a1.5 1.5 0 0 1 1.5 1.5V11"/><path d="M3 18v2M21 18v2"/></svg>
+      <span class="navlabel"><span class="en">Shelter</span><span class="es">Refugio</span></span>
+    </button>
+    <button class="navbtn" data-target="food">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 2 2v9M6 3v7M9 3v7"/><path d="M17 3c-1.4 0-2.5 2-2.5 5s1.1 5 2.5 5v8"/></svg>
+      <span class="navlabel"><span class="en">Food</span><span class="es">Comida</span></span>
+    </button>
+    <button class="navbtn" data-target="health">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.5-4.6-9.7-9.2C.7 7.7 2.4 4.5 5.7 4c2-.3 3.7.6 4.8 2.2L12 8l1.5-1.8c1.1-1.6 2.8-2.5 4.8-2.2 3.3.5 5 3.7 3.4 7.3C19.5 15.9 12 20.5 12 20.5Z"/></svg>
+      <span class="navlabel"><span class="en">Health</span><span class="es">Salud</span></span>
+    </button>
+    <button class="navbtn" data-target="jobs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="12" rx="1.6"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/><path d="M3 12.5h18"/></svg>
+      <span class="navlabel"><span class="en">Jobs</span><span class="es">Empleo</span></span>
+    </button>
+    <button class="navbtn" data-target="legal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 8h16M6 8l-2.5 5a2.5 2.5 0 0 0 5 0L6 8Z"/><path d="M18 8l-2.5 5a2.5 2.5 0 0 0 5 0L18 8Z"/><path d="M8.5 20h7"/></svg>
+      <span class="navlabel"><span class="en">Legal</span><span class="es">Legal</span></span>
+    </button>
+    <button class="navbtn" data-target="more">
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+      <span class="navlabel"><span class="en">More</span><span class="es">Más</span></span>
+    </button>
+  </nav>
+</div>
+
+<script>
+  (function(){
+    var app = document.getElementById('app');
+    var navBtns = document.querySelectorAll('.navbtn');
+    var screens = document.querySelectorAll('.screen');
+
+    function setScreen(target){
+      screens.forEach(function(s){ s.classList.toggle('active', s.dataset.screen === target); });
+      navBtns.forEach(function(b){ b.classList.toggle('is-active', b.dataset.target === target); });
+      document.getElementById('main').scrollTop = 0;
+      window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+    }
+    navBtns.forEach(function(b){
+      b.addEventListener('click', function(){ setScreen(b.dataset.target); });
+    });
+
+    function setLang(lang){
+      app.setAttribute('data-lang', lang);
+      document.getElementById('langToggle').querySelector('.en-opt').classList.toggle('is-active', lang==='en');
+      document.getElementById('langToggle').querySelector('.es-opt').classList.toggle('is-active', lang==='es');
+    }
+    document.getElementById('langToggle').addEventListener('click', function(){
+      setLang(app.getAttribute('data-lang') === 'en' ? 'es' : 'en');
+    });
+    document.getElementById('moreLangEn').addEventListener('click', function(){ setLang('en'); });
+    document.getElementById('moreLangEs').addEventListener('click', function(){ setLang('es'); });
+
+    function bindFilterRow(rowId, cardsSelector, attr){
+      var row = document.getElementById(rowId);
+      if(!row) return;
+      var btns = row.querySelectorAll('.filterbtn');
+      var cards = document.querySelectorAll(cardsSelector);
+      btns.forEach(function(fb){
+        fb.addEventListener('click', function(){
+          btns.forEach(function(x){ x.classList.remove('is-active'); });
+          fb.classList.add('is-active');
+          var f = fb.dataset.filter;
+          cards.forEach(function(c){
+            var tags = (c.dataset[attr] || '').split(' ');
+            c.style.display = (f === 'all' || tags.indexOf(f) !== -1) ? '' : 'none';
+          });
+        });
+      });
+    }
+    bindFilterRow('shelterFilters', '#screen-shelter .card[data-tags]', 'tags');
+    bindFilterRow('boroughFilters', '#boroughCards .card[data-borough]', 'borough');
+  })();
+</script>
